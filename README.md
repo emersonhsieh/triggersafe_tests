@@ -1,4 +1,4 @@
-# triggersafe_tests
+# TriggerSafe Integration Tests
 
 Integration Tests for triggersafe
 
