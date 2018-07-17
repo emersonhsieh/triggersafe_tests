@@ -67,7 +67,7 @@ def get_containers(pod_name, pod_namespace):
     container_ids = exec_command(pod_name, pod_namespace, get_containers).splitlines()
     return container_ids
 
-def test_delete_pod(pod_name, pod_namespace):
+def test_delete_container(pod_name, pod_namespace):
     print("Testing deleting pod with name: {} and namespace: {}".format(pod_name, pod_namespace))
     container_ids = get_containers(pod_name, pod_namespace)
     print("Current container ids on pod {}: {}", pod_name, container_uds)
@@ -114,5 +114,5 @@ if __name__ == "__main__":
     for name, a in pods.iteritems():
         pod_name = name
         pod_namespace = a[0].namespace
-        test_delete_pod(pod_name, pod_namespace)
+        test_delete_container(pod_name, pod_namespace)
 
