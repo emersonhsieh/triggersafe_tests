@@ -1,13 +1,12 @@
 # TriggerSafe Integration Tests
 
-Integration Tests for triggersafe
-
 A real time testing tool for triggersafe that will automatically inject failures.
+
+This script uses the Kubernetes Python client and runs with Python3.
 
 Types of failures to simulate:
 
-    - Delete Pods / Containers
-    - Add Pods / Containers
-    - Change configurations
-
-After failure event is simulated, have a timeout, then check if the resulting state is correct.
+* Delete Pods without deleting deployment
+* Deleting Pods with deleting deployment
+* Add Pods
+* Change configurations
