@@ -102,6 +102,6 @@ if __name__ == "__main__":
     # Deleting a pod:
     # Testing deleting a pod
     for pod in pods_list:
-        if pod_namespace == 'default':
+        if pod_namespace(pod) == 'default':
             test_delete_pod(api, pod)
 
