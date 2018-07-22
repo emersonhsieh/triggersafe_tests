@@ -40,7 +40,7 @@ def test_delete_pod(api, pod):
     returns False if pod recovery a failure.
     '''
 
-    print("Test deleting: Pod Name: {} \t Pod Namespace: {}".format(pods.name(pod), pods.namespace(pod)))
+    print("\nTest deleting: Pod Name: {} \t Pod Namespace: {}".format(pods.name(pod), pods.namespace(pod)))
 
     pods_before_deletion = len(pods.get_pods_list(api))
     print("Before deletion: {} pods".format(pods_before_deletion))
@@ -97,4 +97,4 @@ if __name__ == "__main__":
     # Print summary
     print("\n\n\n Summary:")
     for i in summary:
-        print("Pod Name: {} \t\t Pod Namespace: {} \t\t Pod Recovered: {}".format(i['name'], i['namespace'], i['recovery']))
+        print("Pod Namespace: {} \t Pod Recovered: {} \t Pod Name: {} \t ".format(i['namespace'], i['recovery'], i['name']))
