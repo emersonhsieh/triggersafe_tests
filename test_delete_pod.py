@@ -12,12 +12,10 @@ def delete_pod(api, pod):
     name = pods.name(pod)
     namespace = pods.namespace(pod)
     body = client.V1DeleteOptions()
-    pretty = 'Pod deleted successfully'
     grace_period_seconds = 0
-    propagation_policy = 'propagation_policy_example'
 
     try: 
-        api_response = api.delete_namespaced_pod(name, namespace, body, pretty=pretty, grace_period_seconds=grace_period_seconds, propagation_policy=propagation_policy)
+        api_response = api.delete_namespaced_pod(name, namespace, body, grace_period_seconds=grace_period_seconds)
         print(api_response)
     except ApiException as e:
         print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
@@ -34,8 +32,7 @@ def get_containers(pod):
     return container_ids
 
 def test_delete_pod(api, pod):
-    '''
-    Test delete a pod
+    ''' Test delete a pod
     returns True if pod recovery a success.
     returns False if pod recovery a failure.
     '''
@@ -98,3 +95,4 @@ if __name__ == "__main__":
     print("\n\n\n Summary:")
     for i in summary:
         print("Pod Namespace: {} \t Pod Recovered: {} \t Pod Name: {} \t ".format(i['namespace'], i['recovery'], i['name']))
+
