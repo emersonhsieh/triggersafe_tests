@@ -49,20 +49,20 @@ def check_default_namespace():
     return no_pods_in_default
 
 if __name__ == "__main__":
-    # Initialize APIuration")
-    args = parser.parse_args()
-    assert (args.yaml_path != None), "Must include path to yaml deployment configuration"
-
-    print("Deleting deployment...")
-    deletion_command = "kubectl delete
+    # Initialize API
     config.load_kube_config()
     api = client.CoreV1Api()    
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--yaml_path", help="Path to yaml deployment config -f {}".format(args.yaml_path)
+    parser.add_argument("--yaml_path", help="Path to yaml deployment configuration")
+    args = parser.parse_args()
+    assert (args.yaml_path != None), "Must include path to yaml deployment configuration"
+
+    print("Deleting deployment...")
+    deletion_command = "kubectl delete -f {}".format(args.yaml_path)
     
     call(deletion_command, shell=True)
-    print("Deployment deleted. \n\n")
+    print("Pods Deleted")
     
     pods_deleted = check_default_namespace()
     if pods_deleted:
