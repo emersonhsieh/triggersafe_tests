@@ -6,31 +6,6 @@ from time import sleep
 
 import pods as pods
 
-def delete_pod(api, pod):
-    ''' Delete pod without deleting deployment '''
-
-    name = pods.name(pod)
-    namespace = pods.namespace(pod)
-    body = client.V1DeleteOptions()
-    grace_period_seconds = 0
-
-    try: 
-        api_response = api.delete_namespaced_pod(name, namespace, body, grace_period_seconds=grace_period_seconds)
-        print(api_response)
-    except ApiException as e:
-        print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
-    
-    print("Deleted pod {}".format(name))
-
-def get_containers(pod):
-    ''' For debugging purposes: Get the list of containers in a pod '''
-    num_containers = len(pod.status.container_statuses)
-    container_ids = []
-    for i in range(0, num_containers):
-        container_ids.append(pods_list[pod_index].status.container_statuses[i].container_id)
-
-    return container_ids
-
 def test_delete_pod(api, pod):
     ''' Test delete a pod
     returns True if pod recovery a success.
@@ -42,7 +17,7 @@ def test_delete_pod(api, pod):
     pods_before_deletion = len(pods.get_pods_list(api))
     print("Before deletion: {} pods".format(pods_before_deletion))
     
-    delete_pod(api, pod)
+    pods.delete_pod(api, pod)
     pods_after_deletion = len(pods.get_pods_list(api))
     print("After deletion: {} pods".format(pods_after_deletion))
     
@@ -52,8 +27,8 @@ def test_delete_pod(api, pod):
 
     while cur_attempts < max_attempts and (not pod_recovers) :
         print("Checking for pod deletion and recovery, attempt {}".format(cur_attempts))
-        print("Sleeping for 5 seconds...\n")
-        sleep(5)
+        print("Sleeping for 10 seconds...\n")
+        sleep(10)
 
         cur_pod_count = len(pods.get_pods_list(api))
         print("\nThere are currently {} pods".format(cur_pod_count))

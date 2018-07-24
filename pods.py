@@ -25,8 +25,31 @@ def get_pods_list(api):
         
     pod_list = []
 
+    print("List of pods:")
     for pod in api_response.items:
         print("Namespace: {} \t IP: {} \t Pod Name: {} ".format(namespace(pod), ip(pod), name(pod)))
         pod_list.append(pod)
 
     return pod_list
+
+def get_containers(pod):
+    ''' For debugging purposes: Get the list of containers in a pod '''
+    num_containers = len(pod.status.container_statuses)
+    container_ids = []
+    for i in range(0, num_containers):
+        container_ids.append(pods_list[pod_index].status.container_statuses[i].container_id)
+
+    return container_ids
+
+def delete_pod(api, pod):
+    ''' Delete pod without deleting deployment '''
+    body = client.V1DeleteOptions()
+    grace_period_seconds = 0
+
+    try: 
+        api_response = api.delete_namespaced_pod(name(pod), namespace(pod), body, grace_period_seconds=grace_period_seconds)
+    except ApiException as e:
+        print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
+    
+    print("Deleted pod {}".format(name(pod)))
+

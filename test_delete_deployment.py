@@ -7,28 +7,18 @@ from time import sleep
 from subprocess import call
 
 import pods as pods
-
-def get_services(api, namespace):
-    ''' Debug purposes: Gets the list of services
-    To get the name of the service: api_response.items[0].metadata.name
-    '''
+import deployments as deployments
+import services as services
     
-    try: 
-        api_response = api.list_namespaced_service(namespace, watch=False)
-    except ApiException as e:
-        print("Exception when calling CoreV1Api->list_namespaced_service: %s\n" % e)
-
-    return api_response
-    
-def check_default_namespace():
-    ''' Checks that there are no pods left within the 'default' namespace. '''
+def check_empty_namespace(api, namespace):
+    ''' Checks that there are no pods left within a namespace. '''
     
     max_attempts = 10
     cur_attempts = 0
     no_pods_in_default = False
 
     while cur_attempts < max_attempts and (not no_pods_in_default):
-        print("Checking that there are no pods in default namespace, attempt {}".format(cur_attempts))
+        print("Checking that there are no pods in namespace: {}, attempt {}".format(namespace, cur_attempts))
         print("Sleeping for 5 seconds...\n")
         sleep(5)
 
@@ -38,7 +28,7 @@ def check_default_namespace():
         pod_in_default = False
 
         for pod in pods_list:
-            if pods.namespace(pod) == 'default':
+            if pods.namespace(pod) == namespace:
                 pod_in_default = True
         
         if (not pod_in_default):
@@ -51,20 +41,28 @@ def check_default_namespace():
 if __name__ == "__main__":
     # Initialize API
     config.load_kube_config()
-    api = client.CoreV1Api()    
-    
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--yaml_path", help="Path to yaml deployment configuration")
-    args = parser.parse_args()
-    assert (args.yaml_path != None), "Must include path to yaml deployment configuration"
+    api = client.CoreV1Api()
+    beta_api = client.ExtensionsV1beta1Api()
 
-    print("Deleting deployment...")
-    deletion_command = "kubectl delete -f {}".format(args.yaml_path)
-    
-    call(deletion_command, shell=True)
-    print("Pods Deleted")
-    
-    pods_deleted = check_default_namespace()
+    print("\n\n Delete all deployments in default")
+    deployments_list = deployments.get_deployments(beta_api)
+    for deployment in deployments_list:
+        if deployments.namespace(deployment) == 'default':
+            deployments.delete_deployment(beta_api, deployment)
+
+    print("\n\n Delete all services in default")
+    services_list = services.get_services(api)
+    for service in services_list:
+        if services.namespace(service) == 'default':
+            services.delete_service(api, service)
+
+    print("\n\n Delete all pods in default")
+    pods_list = pods.get_pods_list(api)
+    for pod in pods_list:
+        if pods.namespace(pod) == 'default':
+            pods.delete_pod(api, pod)
+
+    pods_deleted = check_empty_namespace(api, 'default')
     if pods_deleted:
         print("All pods in default namespace successfully deleted")
     else:
