@@ -44,19 +44,19 @@ if __name__ == "__main__":
     api = client.CoreV1Api()
     beta_api = client.ExtensionsV1beta1Api()
 
-    print("\n\n Delete all deployments in default")
+    print("\n\nDelete all deployments in default namespace")
     deployments_list = deployments.get_deployments(beta_api)
     for deployment in deployments_list:
         if deployments.namespace(deployment) == 'default':
             deployments.delete_deployment(beta_api, deployment)
 
-    print("\n\n Delete all services in default")
+    print("\n\nDelete all services in default namespace")
     services_list = services.get_services(api)
     for service in services_list:
         if services.namespace(service) == 'default':
             services.delete_service(api, service)
 
-    print("\n\n Delete all pods in default")
+    print("\n\nDelete all pods in default namespace")
     pods_list = pods.get_pods_list(api)
     for pod in pods_list:
         if pods.namespace(pod) == 'default':
