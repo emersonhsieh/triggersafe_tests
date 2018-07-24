@@ -15,6 +15,6 @@ Types of failures to simulate:
 
     python3 test_delete_pod.py
 
-`test_delete_deployment` deletes a deployment via the command line and checks if all pods within the `default` namespace have been deleted. Run this script using:
+`test_delete_deployment` deletes all deployments and services in the `default` namespace and checks if all pods within the `default` namespace have been deleted. Run this script using:
 
-    python3 test_delete_deployment.py --yaml_path <path_to_yaml_deployment_configuration>
+    python3 test_delete_deployment.py
