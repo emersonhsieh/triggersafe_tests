@@ -2,7 +2,7 @@
 
 A real time testing tool for triggersafe that will automatically inject failures. This script uses the Kubernetes Python client and is tested with Python 3.7.
 
-## Types of failures
+## Actions and Responses
 
 Delete Pods without deleting deployment and services (done)
 
