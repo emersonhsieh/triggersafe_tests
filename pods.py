@@ -29,6 +29,8 @@ def get_pods_list(api):
     for pod in api_response.items:
         print("Namespace: {} \t IP: {} \t Pod Name: {} ".format(namespace(pod), ip(pod), name(pod)))
         pod_list.append(pod)
+    
+    print("\n\n")
 
     return pod_list
 
@@ -40,6 +42,12 @@ def get_containers(pod):
         container_ids.append(pods_list[pod_index].status.container_statuses[i].container_id)
 
     return container_ids
+
+def create_pod(api, pod_manifest, pod_namespace):
+    try: 
+        api_response = api.create_namespaced_pod(body=pod_manifest, namespace=pod_namespace)
+    except ApiException as e:
+        print("Exception when calling CoreV1Api->create_namespaced_pod: %s\n" % e)
 
 def delete_pod(api, pod):
     ''' Delete pod without deleting deployment '''

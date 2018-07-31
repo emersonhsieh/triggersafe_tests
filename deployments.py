@@ -24,7 +24,15 @@ def get_deployments(api):
         print("Namespace: {} \t Deployment Name: {} ".format(namespace(deployment), name(deployment)))
         deployment_list.append(deployment)
 
+    print("\n\n")
+
     return deployment_list
+
+def create_deployment(api, deployment_manifest, deployment_namespace):
+    try: 
+        api_response = api.create_namespaced_deployment(body=deployment_manifest, namespace=deployment_namespace)
+    except ApiException as e:
+        print("Exception when calling ExtensionsV1beta1Api->create_namespaced_deployment: %s\n" % e)
 
 def delete_deployment(api, deployment):
     ''' Delete deployment '''
@@ -34,6 +42,6 @@ def delete_deployment(api, deployment):
     try: 
         api_response = api.delete_namespaced_deployment(name(deployment), namespace(deployment), body, grace_period_seconds=grace_period_seconds)
     except ApiException as e:
-        print("Exception when calling CoreV1Api->delete_namespaced_deployment: %s\n" % e)
+        print("Exception when calling ExtensionsV1beta1Api->delete_namespaced_deployment: %s\n" % e)
     
     print("Deleted deployment {}".format(name(deployment)))

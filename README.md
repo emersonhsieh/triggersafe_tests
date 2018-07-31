@@ -18,6 +18,10 @@ Action performed by trigger
 
 ## Instructions
 
+`test_create` takes in a yaml configuration, creates all the services and deployments specified in the yaml, and then tests to see if the services and deployments have been created. Run this script using:
+
+    python3 -i test_create.py --yaml_path guestbook.yaml
+
 `test_delete_pods.py` deletes all pods in the `default` namespace and checks if the pods recover upon deletion, one-by-one. Run this script using:
 
     python3 test_delete_pods.py

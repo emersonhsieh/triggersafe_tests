@@ -24,7 +24,15 @@ def get_services(api):
         print("Namespace: {} \t Service Name: {} ".format(namespace(service), name(service)))
         service_list.append(service)
 
+    print("\n\n")
+
     return service_list
+
+def create_service(api, service_manifest, service_namespace):
+    try: 
+        api_response = api.create_namespaced_service(body=service_manifest, namespace=service_namespace)
+    except ApiException as e:
+        print("Exception when calling CoreV1Api->create_namespaced_service: %s\n" % e)
 
 def delete_service(api, service):
     ''' Delete service '''
