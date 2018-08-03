@@ -2,6 +2,8 @@ from kubernetes import client, config
 from kubernetes.stream import stream
 from kubernetes.client.rest import ApiException
 
+from time import sleep
+
 import pods as pods
 
 def exec_command(api, name, command):
@@ -18,7 +20,7 @@ def increase_load(api, name, load_percentage):
         "apt-get -y install stress",
         "apt-get -y install sysstat",
         "mpstat",
-        "ab -k -c 350 -n 2000000 localhost:80/",
+        "ab -k -c 1000 -n 2000000 localhost:80/" ,
         "mpstat"
     ]
     for command in commands:
@@ -30,6 +32,48 @@ def increase_load(api, name, load_percentage):
         ]
         exec_command(api, name, command)
     
+def create_request_pod(api, request_pod_name, request_pod_manifest):
+    pods_list = pods.get_pods_list(api)
+    pods_names = pods.pod_names(pods_list)
+
+    # First delete an existing pod if it exists
+    if request_pod_name in pods_names:
+        pods.delete_pod_name(api, request_pod_name, 'default')
+        print("Wait for existing request pod to terminate...")
+
+        request_pod_terminated = False
+        while not request_pod_terminated:
+            print("Checking if pod terminated")
+            if request_pod_name in pods_names:
+                sleep(5)
+            else:
+                request_pod_terminated = True
+                print("Existing request pod terminated.")
+    
+    # Creating request pod
+    pods.create_pod(api, request_pod_manifest, 'default')
+    print("Creating request pod:")
+    
+    request_pod_created = False
+    while not request_pod_created:
+        print("Checking if pod is in list of pods")
+        if request_pod_name in pods_names:
+            request_pod_created = True
+            print("Request pod created")
+        else:
+            sleep(5)
+
+    # Check if request pod is running:
+    request_pod = pods.get_pod_by_name(request_pod_name)
+    print("Check if request pod is running:")
+    
+    request_pod_running = False
+    while not request_pod_created:
+        print("Request pod at phase: {}".format(pods.phase(request_pod)))
+        if pods.phase(request_pod) == 'Running':
+            request_pod_running = True
+        else:
+            sleep(5)
 
 if __name__ == "__main__":
     # Initialize API
@@ -37,12 +81,31 @@ if __name__ == "__main__":
     api = client.CoreV1Api()
     beta_api = client.ExtensionsV1beta1Api()
     apps_api = client.AppsV1beta1Api()
-    
-    pods_list = pods.get_pods_list(api)
+
+    # Request pod information
+    request_pod_name = 'request-pod'
+    request_pod_manifest = {
+        'apiVersion': 'v1',
+        'kind': 'Pod',
+        'metadata': {
+            'name': 'request-pod'
+        },
+        'spec': {
+            'containers': [{
+                'image': 'ubuntu',
+                'name': 'sleep',
+                "args": [
+                    "/bin/sh",
+                    "-c",
+                ]
+            }]
+        }
+    }
+
+    create_request_pod(api, request_pod_name, request_pod_manifest)
     
     # Test on first pod
-    pods.get_containers(pods_list[0])
-    increase_load(api, pods.name(pods_list[0]), 0.2)
+    increase_load(api, request_pod_name, 0.2)
 
     pods_list_new = pods.get_pods_list(api)
     
