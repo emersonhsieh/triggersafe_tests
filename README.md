@@ -18,7 +18,7 @@ Action performed by trigger
 
 ## Instructions
 
-`test_create` takes in a yaml configuration, creates all the services and deployments specified in the yaml, and then tests to see if the services and deployments have been created. Run this script using:
+`test_create.py` takes in a yaml configuration, creates all the services and deployments specified in the yaml, and then tests to see if the services and deployments have been created. Run this script using:
 
     python3 -i test_create.py --yaml_path guestbook.yaml
 

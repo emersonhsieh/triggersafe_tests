@@ -39,7 +39,9 @@ def get_containers(pod):
     num_containers = len(pod.status.container_statuses)
     container_ids = []
     for i in range(0, num_containers):
-        container_ids.append(pods_list[pod_index].status.container_statuses[i].container_id)
+        container_id = pod.status.container_statuses[i].container_id
+        container_ids.append(container_id)
+        print("Containers: {}".format(container_id))
 
     return container_ids
 

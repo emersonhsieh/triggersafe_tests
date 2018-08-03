@@ -81,6 +81,7 @@ if __name__ == "__main__":
     config.load_kube_config()
     api = client.CoreV1Api()
     beta_api = client.ExtensionsV1beta1Api()
+    apps_api = client.AppsV1beta1Api()
 
     # Change filename to location of yaml config
     stream = open(args.yaml_path, 'r')
@@ -89,14 +90,13 @@ if __name__ == "__main__":
     summary = []
 
     for manifest in manifests:
-
         print(manifest)
         kind = manifest['kind']
         name = manifest['metadata']['name']
         namespace = 'default'
         
         if kind == 'Deployment':
-            creation = test_create_deployment(beta_api, manifest=manifest, namespace='default')
+            creation = test_create_deployment(apps_api, manifest=manifest, namespace='default')
         elif kind == 'Service':
             creation = test_create_service(api, manifest=manifest, namespace='default')
         
