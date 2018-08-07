@@ -16,6 +16,8 @@ A testing tool for triggersafe that will automatically inject events. This scrip
 
     python3 test_delete_deployments.py
 
-`test_autoscaling.py` creates a new pod called `request-pod`, from which requests are sent to all other frontend pods one-by-one. When running the script a second time, the script deletes and re-creates the request pod. `--request_pod_yaml` specifies the yaml configuration of the request pod. As a reference, 1000 simultaneous connections with 200,000 requests will increase both the user and system CPU usage by around 0.1%.
+`test_autoscaling.py` creates a new pod called `request-pod`, from which requests are sent to all other `frontend` pods one-by-one. When running the script a second time, the script deletes and re-creates the request pod. `--request_pod_yaml` specifies the yaml configuration of the request pod. As a reference, 1000 simultaneous connections with 200,000 requests will increase both the user and system CPU usage by around 0.1%.
+
+To use a custom request pod configuration, use a ubuntu image and make sure that the `label` is not set to `frontend`.
 
     python3 test_autoscaling.py --requests <amount of requests> --request_pod_yaml <ubuntu_pod.yaml>
