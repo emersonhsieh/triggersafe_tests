@@ -24,6 +24,7 @@ def increase_load(api, request_pod_name, stress_pod, load_amount):
     pods.exec_commands(api, stress_pod_name, install_sysstat)
 
     # View CPU usage
+    print("\n\mpstat of pod before stressing")
     pods.exec_commands(api, stress_pod_name, ["mpstat"], display_output=True)
 
     # Stressing remotely.
@@ -37,7 +38,7 @@ def increase_load(api, request_pod_name, stress_pod, load_amount):
     print("\n\nPod stressed")
 
     # Then, get mpstat of stress_pod to see cpu usage.
-    print("\n\nGetting mpstat again of pod being stressed")
+    print("\n\mpstat of pod after stressing")
     pods.exec_commands(api, stress_pod_name, ["mpstat"], display_output=True)
 
 def create_request_pod(api, request_pod_name, request_pod_manifest):
