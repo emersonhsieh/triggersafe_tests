@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: request-pod
+  labels:
+    tier: request-pod
+spec:  # specification of the pod's contents
+  restartPolicy: Never
+  containers:
+  - name: hello
+    image: "ubuntu:14.04"
+    command: ["/bin/sh", "-c", "sleep infinity"] # Sleep infinity is used to keep pod awake

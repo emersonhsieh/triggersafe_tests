@@ -108,4 +108,4 @@ if __name__ == "__main__":
     # Print summary
     print("\n\n\n Summary:")
     for i in summary:
-        print("Kind: {} \t Namespace: {} \t Name: {} \t Creation Success: {} \t ".format(i['kind'], i['namespace'], i['creation'], i['name']))
+        print("Kind: {} \t Creation Success: {} \t Namespace: {}  \t Name: {}".format(i['kind'], i['creation'], i['namespace'], i['name']))

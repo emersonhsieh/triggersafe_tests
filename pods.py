@@ -15,9 +15,14 @@ def ip(pod):
     return pod.status.pod_ip
 
 def phase(pod):
+    ''' Return current phase of pod object '''
     return pod.status.phase
 
-def get_pods_list(api):
+def tier(pod):
+    ''' Return tier. frontend, backend, node '''
+    return pod.metadata.labels['tier']
+
+def get_pods_list(api, display_pods=False):
     ''' Returns list of pods
     pod_list = list of pods with metadata and status
     '''
@@ -28,12 +33,16 @@ def get_pods_list(api):
         
     pod_list = []
 
-    print("List of pods:")
+    if display_pods:
+        print("List of pods:")
+        
     for pod in api_response.items:
-        print("Namespace: {} \t IP: {} \t Pod Name: {} ".format(namespace(pod), ip(pod), name(pod)))
+        if display_pods:
+            print("Namespace: {} \t IP: {} \t Pod Name: {} ".format(namespace(pod), ip(pod), name(pod)))
+        # print(pod)
         pod_list.append(pod)
     
-    print("\n\n")
+    # print("\n\n")
 
     return pod_list
 
@@ -76,7 +85,7 @@ def delete_pod(api, pod):
     except ApiException as e:
         print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
     
-    print("Deleted pod {}".format(name(pod)))
+    print("Delete pod {}".format(name(pod)))
 
 def delete_pod_name(api, pod_name, pod_namespace):
     ''' Delete pod without deleting deployment '''
@@ -89,3 +98,23 @@ def delete_pod_name(api, pod_name, pod_namespace):
         print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
     
     print("Deleted pod {}".format(pod_name))
+
+def exec_command(api, name, command, display_output):
+    ''' Execute single command '''
+    try:
+        response = stream(api.connect_get_namespaced_pod_exec, name, 'default', command=command, stderr=True, stdin=False,stdout=True, tty=False)
+        if display_output:
+            print(response)
+    except ApiException as e:
+        print("Exception when calling CoreV1Api->connect_get_namespaced_pod_exec: %s\n" % e)
+
+def exec_commands(api, name, commands, display_output=False):
+    ''' Execute list of commands. Use this abstraction instead of exec_command. '''
+    for command in commands:
+        print("Pod: {} Command: {}".format(name, command))
+        command = [
+            "/bin/sh",
+            "-c",
+            command
+        ]
+        exec_command(api, name, command, display_output)
