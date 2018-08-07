@@ -15,7 +15,7 @@ def increase_load(api, request_pod_name, stress_pod, load_amount):
     ab_command = "ab -k -c 1000 -n " + str(load_amount) + " " + stress_pod_ip + ":80/"
 
     # First, get mpstat of stress_pod
-    # If there is an apt-get error, add the display_output=True to exec_commands
+    # If there is an apt-get error, add the display_output=True to exec_commands to debug
     print("\n\nGetting mpstat of pod being stressed")
     install_sysstat = [
         "apt-get update",
