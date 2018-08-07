@@ -24,7 +24,7 @@ A testing tool for triggersafe that will automatically inject events. This scrip
 
 ### Elastic Autoscaler
 
-`test_autoscaling.py` creates a new pod called `request-pod`, from which requests are sent to all other `frontend` pods one-by-one. When running the script a second time, the script deletes and re-creates the request pod. `--request_pod_yaml` specifies the yaml configuration of the request pod. As a reference, 1000 simultaneous connections with 200,000 requests will increase both the user and system CPU usage by around 0.1%.
+`test_autoscaling.py` creates a new pod called `request-pod`, from which requests are sent to all other `frontend` pods one-by-one. When running the script a second time, the script deletes and re-creates the request pod. The `request_pod_yaml` flag specifies the yaml configuration of the request pod. As a reference, 1000 simultaneous connections with 200,000 requests will increase both the user and system CPU usage by around 0.1%.
 
 To use a custom request pod configuration, use a ubuntu image and make sure that the `label` is not set to `frontend`.
 
@@ -40,6 +40,6 @@ Before running this script, the user needs to label a node with a custom label, 
 
     kubectl label nodes ip-172-20-46-211.us-west-1.compute.internal node=my_node
 
-Then, a specificied number of pods are placed on that node.
+Use the label in the previous command for the `pods_hostname` flag. A specificied number of pods are then placed on that node.
 
     python3 test_distribution.py --pods_to_create <number of pods> --pods_hostname <my_node> --yaml_path nginx.yaml
