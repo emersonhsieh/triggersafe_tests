@@ -2,6 +2,8 @@ from kubernetes import client, config
 from kubernetes.stream import stream
 from kubernetes.client.rest import ApiException
 
+from time import sleep
+
 def name(service):
     ''' Return name from service object '''
     return service.metadata.name
@@ -46,3 +48,32 @@ def delete_service(api, service):
     
     print("Deleted service {}".format(name(service)))
 
+def test_create_service(api, manifest, namespace):
+    ''' Test create a service '''
+    
+    before_creation = len(get_services(api))
+    print("Before creation: {} services".format(before_creation))
+    create_service(api, manifest, namespace)
+    max_attempts = 10
+    cur_attempts = 0
+    service_created = False
+
+    while cur_attempts < max_attempts and (not service_created) :
+        print("Checking for service creation, attempt {}".format(cur_attempts))
+        print("Sleeping for 10 seconds...\n")
+        sleep(10)
+
+        cur_count = len(get_services(api))
+        print("\nThere are currently {} services".format(cur_count))
+        if cur_count > before_creation:
+            print("Service have been created")
+            service_created = True
+        cur_attempts += 1
+
+    if service_created:
+        print("Cooldown for newly created service for 10 seconds...")
+        sleep(10)
+        return True
+    else:
+        print("Service fails to be created")
+        return False

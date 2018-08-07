@@ -92,10 +92,10 @@ def create_request_pod(api, request_pod_name, request_pod_manifest):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--requests", help="Number of requests")
-    parser.add_argument("--request_pod_yaml", help="Number of requests")
+    parser.add_argument("--request_pod_yaml", help="Request pod yaml configuration")
     args = parser.parse_args()
-    assert (args.requests != None), "Add the number of requests: recommended 2000000"
-    assert (args.request_pod_yaml != None), "Add the yaml for the request pod"
+    assert (args.requests != None), "Must include the number of requests: recommended 2000000"
+    assert (args.request_pod_yaml != None), "Must include the yaml for the request pod"
     
     # Initialize API
     config.load_kube_config()

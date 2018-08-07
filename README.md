@@ -21,3 +21,8 @@ A testing tool for triggersafe that will automatically inject events. This scrip
 To use a custom request pod configuration, use a ubuntu image and make sure that the `label` is not set to `frontend`.
 
     python3 test_autoscaling.py --requests <amount of requests> --request_pod_yaml <ubuntu_pod.yaml>
+
+For example
+    kubectl label nodes ip-172-20-46-211.us-west-1.compute.internal node=slave1
+
+    python3 test_distribution.py --pods_to_create <number of pods> --pods_hostname <node to put pods on> --yaml_path <twenty.yaml>

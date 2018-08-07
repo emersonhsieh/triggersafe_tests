@@ -53,7 +53,7 @@ if __name__ == "__main__":
     print("\n\nDelete all services in default namespace")
     services_list = services.get_services(api)
     for service in services_list:
-        if services.namespace(service) == 'default':
+        if services.namespace(service) == 'default' and services.name(service) != 'kubernetes':
             services.delete_service(api, service)
 
     print("\n\nDelete all pods in default namespace")

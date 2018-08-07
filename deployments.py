@@ -2,6 +2,8 @@ from kubernetes import client, config
 from kubernetes.stream import stream
 from kubernetes.client.rest import ApiException
 
+from time import sleep
+
 def name(deployment):
     ''' Return name from deployment object '''
     return deployment.metadata.name
@@ -45,3 +47,33 @@ def delete_deployment(api, deployment):
         print("Exception when calling ExtensionsV1beta1Api->delete_namespaced_deployment: %s\n" % e)
     
     print("Deleted deployment {}".format(name(deployment)))
+
+def test_create_deployment(api, manifest, namespace):
+    ''' Test create a deployment '''
+    
+    before_creation = len(get_deployments(api))
+    print("Before creation: {} deployments".format(before_creation))
+    create_deployment(api, manifest, namespace)
+    max_attempts = 10
+    cur_attempts = 0
+    deployment_created = False
+
+    while cur_attempts < max_attempts and (not deployment_created) :
+        print("Checking for deployment creation, attempt {}".format(cur_attempts))
+        print("Sleeping for 10 seconds...\n")
+        sleep(10)
+
+        cur_count = len(get_deployments(api))
+        print("\nThere are currently {} deployments".format(cur_count))
+        if cur_count > before_creation:
+            print("deployment have been created")
+            deployment_created = True
+        cur_attempts += 1
+
+    if deployment_created:
+        print("Cooldown for newly created deployment for 10 seconds...")
+        sleep(10)
+        return True
+    else:
+        print("Deployment fails to be created")
+        return False

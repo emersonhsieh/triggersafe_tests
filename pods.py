@@ -2,6 +2,8 @@ from kubernetes import client, config
 from kubernetes.stream import stream
 from kubernetes.client.rest import ApiException
 
+from time import sleep
+
 def name(pod):
     ''' Return name from pod object '''
     return pod.metadata.name
@@ -22,6 +24,10 @@ def tier(pod):
     ''' Return tier. frontend, backend, node '''
     return pod.metadata.labels['tier']
 
+def node(pod):
+    ''' Return the node that the pod is residing on '''
+    return pod.spec.node_name
+
 def get_pods_list(api, display_pods=False):
     ''' Returns list of pods
     pod_list = list of pods with metadata and status
@@ -38,7 +44,7 @@ def get_pods_list(api, display_pods=False):
         
     for pod in api_response.items:
         if display_pods:
-            print("Namespace: {} \t IP: {} \t Pod Name: {} ".format(namespace(pod), ip(pod), name(pod)))
+            print("Namespace: {} \t IP: {} \t Pod Node: {} \t\t Pod Name: {}".format(namespace(pod), ip(pod), node(pod), name(pod)))
         # print(pod)
         pod_list.append(pod)
     
@@ -98,6 +104,36 @@ def delete_pod_name(api, pod_name, pod_namespace):
         print("Exception when calling CoreV1Api->delete_namespaced_pod: %s\n" % e)
     
     print("Deleted pod {}".format(pod_name))
+    
+def test_create_pods(api, manifest, namespace):
+    ''' Test create a pod '''
+    
+    before_creation = len(get_pods_list(api))
+    print("\n\nBefore creation: {} pods".format(before_creation))
+    create_pod(api, manifest, namespace)
+    max_attempts = 10
+    cur_attempts = 0
+    pod_created = False
+
+    while cur_attempts < max_attempts and (not pod_created) :
+        print("Checking for pod creation, attempt {}".format(cur_attempts))
+        print("Sleeping for 2 seconds...\n")
+        sleep(2)
+
+        cur_count = len(get_pods_list(api))
+        print("\nThere are currently {} pods".format(cur_count))
+        if cur_count > before_creation:
+            print("pod have been created")
+            pod_created = True
+        cur_attempts += 1
+
+    if pod_created:
+        print("Cooldown for newly created pod for 2 seconds...")
+        sleep(2)
+        return True
+    else:
+        print("pod fails to be created")
+        return False
 
 def exec_command(api, name, command, display_output):
     ''' Execute single command '''

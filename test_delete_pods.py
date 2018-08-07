@@ -54,7 +54,7 @@ if __name__ == "__main__":
     api = client.CoreV1Api()
 
     # List of pods in a python list
-    pods_list = pods.get_pods_list(api, display_pods)
+    pods_list = pods.get_pods_list(api, display_pods=True)
     summary = []
 
     # Test delete pods
